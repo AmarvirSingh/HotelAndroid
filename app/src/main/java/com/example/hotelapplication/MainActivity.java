@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ArrayList<Rooms> roomList = new ArrayList<>();
     Spinner spinner;
     ImageView image1,image2;
-    TextView price, quantity;
+    TextView price, quantity, totalAmount;
     RadioButton rbNormal,rbSuper,rbLuxury, rbSuite;
     CheckBox parking, breakfast, free;
     SeekBar seekbar;
@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         free = findViewById(R.id.free);
         seekbar = findViewById(R.id.seekBar);
         order = findViewById(R.id.order);
+        totalAmount = findViewById(R.id.totalAmount);
+
 
         // ************************************* Spinner ******************************
         ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,names);
@@ -74,6 +76,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // ************************ SeekBAr Event ***************************************
         seekbar.setOnSeekBarChangeListener(this);
 
+
+        // ***************************Order button event ************************************
+        order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double total = 0;
+                double currentPrice = Double.parseDouble(price.getText().toString());
+                double quan = Double.parseDouble(quantity.getText().toString());
+                if (quan != 0){
+                    total = currentPrice * quan;
+                }
+                else{
+                    total = currentPrice;
+                }
+    if (free.isChecked()){
+                    total += (0.1 * total);
+                }
+                totalAmount.setText(String.format("%.2f",total * 1.13 ));
+
+
+            }
+        });
 
         originalPrice = roomList.get(0).getPrice();
 
@@ -122,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         else if (v.getId() == R.id.rbSuite){
             price.setText(String.valueOf(originalPrice + (1 * originalPrice)));
         }
+
     }
 
     // ***************************************** Check boxes Function ********************************
@@ -145,22 +170,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 currentPrice -= 20;
             }
         }
-        if (buttonView.getId() == R.id.free){
-            if (free.isChecked()){
-                currentPrice += (0.1 * currentPrice);
-            }
-            else{
-                currentPrice -= (0.1 * currentPrice);
-            }
-        }
+
         price.setText(String.format("%.2f",currentPrice));
 
     }
+
 
     // ****************************** SeekBAR FUNCTION ***************************
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         quantity.setText(String.valueOf(progress));
+
     }
 
     @Override
