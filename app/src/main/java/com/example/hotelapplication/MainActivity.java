@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
     String names[] = {"Single Bed Room", "Double Bed Room","Window Bed Room","Balcony Bed Room","Luxury Bed Room"};
     ArrayList<Rooms> roomList = new ArrayList<>();
@@ -65,6 +66,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         rbLuxury.setOnClickListener(this);
         rbSuite.setOnClickListener(this);
 
+        // ******************************* Checkboxes Action ********************************
+        parking.setOnCheckedChangeListener(this);
+        breakfast.setOnCheckedChangeListener(this);
+        free.setOnCheckedChangeListener(this);
+
+        // ************************ SeekBAr Event ***************************************
+        seekbar.setOnSeekBarChangeListener(this);
+
 
         originalPrice = roomList.get(0).getPrice();
 
@@ -99,19 +108,68 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // *********************************** Radio Button Function ********************************
     @Override
     public void onClick(View v) {
-       
+
 
         if (v.getId() == R.id.rbNormal){
             price.setText(String.valueOf(originalPrice));
         }
-        if (v.getId() == R.id.rbSuper){
+        else if (v.getId() == R.id.rbSuper){
             price.setText(String.valueOf(originalPrice + (0.25 * originalPrice)));
         }
-        if (v.getId() == R.id.rbLuxury){
+        else if (v.getId() == R.id.rbLuxury){
             price.setText(String.valueOf(originalPrice + (0.50 * originalPrice)));
         }
-        if (v.getId() == R.id.rbSuite){
+        else if (v.getId() == R.id.rbSuite){
             price.setText(String.valueOf(originalPrice + (1 * originalPrice)));
         }
+    }
+
+    // ***************************************** Check boxes Function ********************************
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        double currentPrice = Double.parseDouble(price.getText().toString());
+
+
+        if (buttonView.getId() == R.id.parking){
+            if (parking.isChecked()){
+                currentPrice += 25;
+            }else{
+                currentPrice -= 25;
+            }
+        }
+        if (buttonView.getId() == R.id.breakfast){
+            if (breakfast.isChecked()){
+                currentPrice += 20;
+            }
+            else{
+                currentPrice -= 20;
+            }
+        }
+        if (buttonView.getId() == R.id.free){
+            if (free.isChecked()){
+                currentPrice += (0.1 * currentPrice);
+            }
+            else{
+                currentPrice -= (0.1 * currentPrice);
+            }
+        }
+        price.setText(String.format("%.2f",currentPrice));
+
+    }
+
+    // ****************************** SeekBAR FUNCTION ***************************
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        quantity.setText(String.valueOf(progress));
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }
